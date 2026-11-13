@@ -106,7 +106,7 @@ export function prop(kind, x, y, s = 1, o = {}) {
       const bust = (px, c, veil) => (veil ? plain(P(`M${px - 9} 22 Q${px - 12} -10 ${px} -14 Q${px + 12} -10 ${px + 9} 22Z`), '#f4f2ee') : '') +
         plain(P(`M${px - 8} 24 Q${px - 8} 4 ${px} 4 Q${px + 8} 4 ${px + 8} 24Z`), c) + plain(E(px, -3, 6, 7), '#a9a39a');
       i += clip(R(-18, -24, 36, 48), o.trio
-        ? bust(-10, '#3b3a44') + bust(10, '#77727f', true) + plain(P('M-8 24 Q-10 2 0 2 Q10 2 8 24Z'), '#1b1230') + plain(E(0, -5, 6, 7), '#e6e1f2') + plain(P('M-6 -8 Q0 -16 6 -8 L0 -6Z'), '#1b1230')
+        ? bust(-10, '#3b3a44') + bust(10, '#77727f', true) + plain(P('M-8 24 Q-10 2 0 2 Q10 2 8 24Z'), '#1b1230') + plain(E(0, -5, 6, 7), '#f3c9a2') + plain(P('M-6 -8 Q0 -16 6 -8 L0 -6Z'), '#7a4a2a')
         : bust(-8, '#3b3a44') + bust(8, '#8c8791', true));
       break;
     }
@@ -166,50 +166,72 @@ export function prop(kind, x, y, s = 1, o = {}) {
 // --- personnages -----------------------------------------------------------
 const POSES = {
   down: [[10, 52], [8, 100]], hold: [[18, 44], [46, 32]], up: [[34, -36], [40, -96]], ear: [[34, 14], [14, -62]],
-  front: [[6, 48], [-28, 60]], reach: [[42, -2], [88, -10]], chin: [[16, 34], [-22, -18]],
+  front: [[6, 48], [-28, 60]], lap: [[12, 50], [-12, 92]], reach: [[42, -2], [88, -10]], chin: [[16, 34], [-22, -18]],
 };
 
 function figure(x, y, s, o, cfg) {
-  const drop = o.sit ? cfg.sitDrop : 0;
-  let inner = o.float || o.noShadow ? '' : `<ellipse cx="0" cy="2" rx="${cfg.shadow}" ry="12" fill="#000" opacity=".25"/>`;
-  inner += cfg.legs(drop);
+  // Assis : le bassin repose sur l'assise (cfg.seat), les cuisses viennent vers l'avant
+  // (genoux arrondis devant le buste) et les tibias descendent jusqu'au sol.
+  const sit = !!o.sit && !!cfg.seat;
+  const drop = sit ? cfg.hip - cfg.seat : 0;
+  const T = (c) => `<g transform="translate(0 ${drop})">${c}</g>`;
+  let inner = o.float || o.noShadow ? '' : `<ellipse cx="0" cy="2" rx="${sit ? 60 : cfg.shadow}" ry="12" fill="#000" opacity=".25"/>`;
+  if (cfg.back) inner += sit ? T(`<g transform="translate(0 ${cfg.backTop}) scale(1.08 0.7) translate(0 ${-cfg.backTop})">${cfg.back()}</g>`) : cfg.back();
+  if (!sit) inner += cfg.legs();
   let up = cfg.body(o);
   const hands = {};
   let armSvg = '';
   for (const [side, sg] of [['L', -1], ['R', 1]]) {
-    const pts = [[sg * cfg.sx, cfg.sy], ...POSES[o[side] || 'down'].map(([dx, dy]) => [sg * (cfg.sx + dx), cfg.sy + dy])];
+    const pts = [[sg * cfg.sx, cfg.sy], ...POSES[o[side] || (sit ? 'lap' : 'down')].map(([dx, dy]) => [sg * (cfg.sx + dx), cfg.sy + dy])];
     const h = pts[pts.length - 1];
     hands[side] = h;
     armSvg += limb(pts, cfg.sleeve) + `<circle cx="${h[0]}" cy="${h[1]}" r="12" fill="${cfg.skin}" ${ST}/>`;
     if (o.handDots === side) armSvg += `<circle cx="${h[0] - 4}" cy="${h[1] - 1}" r="2.6" fill="#5a0f1c"/><circle cx="${h[0] + 4}" cy="${h[1] - 1}" r="2.6" fill="#5a0f1c"/>`;
   }
   const carry = o.L === 'front' && o.R === 'front';
+  inner += T(up);
+  if (sit) {
+    const k = cfg.seat;
+    for (const sg of [-1, 1]) {
+      const cx = sg * 25;
+      inner += flat(R(cx - 13, -k + 8, 26, k - 12, 6), cfg.legC) + flat(E(cx + sg * 3, -4, 22, 10), cfg.shoeC) +
+        cel(R(cx - 18, -k - 20, 36, 46, 16), cfg.legC, cfg.legShade, 4, 4);
+    }
+  }
+  up = '';
   if (o.item && carry) up += prop(o.item, 0, cfg.sy + 44, o.itemS || 1.3, o.itemO);
   up += cfg.head(o) + armSvg;
   if (o.item && !carry) { const h = hands[o.hand || 'R']; up += prop(o.item, h[0], h[1] - 16, o.itemS || 1, o.itemO); }
-  inner += `<g transform="translate(0 ${drop})">${up}</g>`;
+  inner += T(up);
   return G(x, y - (o.float ? 22 : 0), s, inner, o.ghost ? `opacity="${o.ghost}"` : '');
 }
 
-// Le héros : costume de vampire (cape noire doublée de rouge, teint blafard, petites dents pointues).
+// Le héros : un humain déguisé en vampire pour la soirée. Peau et cheveux naturels,
+// jean et baskets qui dépassent du costume, cape nouée par un cordon, fausses dents en plastique.
+const HERO_SKIN = '#f3c9a2', HERO_SKIN_SHADE = '#d9a279';
 export function hero(x, y, s = 1, o = {}) {
   return figure(x, y, s, o, {
-    sx: 44, sy: -214, sleeve: '#2f2a4d', skin: '#e6e1f2', shadow: 100, sitDrop: 60,
+    sx: 44, sy: -214, sleeve: '#2f2a4d', skin: HERO_SKIN, shadow: 100,
+    hip: 104, seat: 92, legC: '#4f74ad', legShade: '#3a5888', shoeC: '#f4efe6', backTop: -238,
     // La cape passe derrière les jambes pour qu'elles restent visibles.
-    legs: (d) => `<g transform="translate(0 ${d * 0.5}) scale(1 ${1 - d / 480})">` +
-      cel(P('M-58 -238 Q-124 -120 -108 -8 Q-72 -24 -54 -6 Q-27 -24 0 -6 Q27 -24 54 -6 Q72 -24 108 -8 Q124 -120 58 -238 Z'), '#33274f', '#221a38') +
-      plain(P('M-44 -228 Q-78 -120 -66 -26 L66 -26 Q78 -120 44 -228 Z'), '#a3202f') + '</g>' +
-      flat(R(-31, -112 + d, 27, 104 - d, 6), '#3d3766') + flat(R(4, -112 + d, 27, 104 - d, 6), '#3d3766') +
-      flat(E(-22, -4, 22, 10), '#14101f') + flat(E(22, -4, 22, 10), '#14101f'),
+    back: () => cel(P('M-58 -238 Q-124 -120 -108 -8 Q-72 -24 -54 -6 Q-27 -24 0 -6 Q27 -24 54 -6 Q72 -24 108 -8 Q124 -120 58 -238 Z'), '#33274f', '#221a38') +
+      plain(P('M-44 -228 Q-78 -120 -66 -26 L66 -26 Q78 -120 44 -228 Z'), '#a3202f'),
+    legs: () => flat(R(-31, -112, 27, 104, 6), '#4f74ad') + flat(R(4, -112, 27, 104, 6), '#4f74ad') +
+      flat(E(-22, -4, 22, 10), '#f4efe6') + flat(E(22, -4, 22, 10), '#f4efe6'),
     body: () =>
       flat(P('M-40 -238 L-82 -322 L-14 -262 Z'), '#c8343f') + flat(P('M40 -238 L82 -322 L14 -262 Z'), '#c8343f') +
       cel(R(-40, -234, 80, 132, 18), '#2f2a4d', '#211d38') +
       thin(P('M-16 -234 L0 -188 L16 -234 Z'), '#f3efe6') +
-      thin(P('M0 -222 L-15 -231 L-15 -213 Z'), '#c8343f') + thin(P('M0 -222 L15 -231 L15 -213 Z'), '#c8343f'),
+      // cordon de la cape, noué sous le menton
+      ln('M-2 -224 Q-16 -206 -12 -190 M2 -224 Q16 -208 10 -194', 3.5, '#f2c230') +
+      thin(P('M0 -224 L-15 -233 L-15 -215 Z'), '#f2c230') + thin(P('M0 -224 L15 -233 L15 -215 Z'), '#f2c230'),
     head: (o) =>
-      cel(E(0, -292, 54, 56), '#e6e1f2', '#bfb6d8') +
-      flat(P('M-54 -298 Q-58 -358 0 -356 Q58 -358 54 -298 Q42 -334 15 -332 L0 -306 L-15 -332 Q-42 -334 -54 -298 Z'), '#1b1230') +
-      (o.redNose ? `<ellipse cx="0" cy="-272" rx="9" ry="7" fill="#e0425a" stroke="${OUT}" stroke-width="2.5"/>` : '') +
+      flat(E(-52, -286, 11, 14), HERO_SKIN) + flat(E(52, -286, 11, 14), HERO_SKIN) +
+      cel(E(0, -292, 54, 56), HERO_SKIN, HERO_SKIN_SHADE) +
+      // cheveux châtains, en bataille
+      flat(P('M-55 -296 Q-64 -352 -22 -356 L-28 -374 L-6 -358 L4 -378 L16 -358 L34 -370 L32 -352 Q62 -344 55 -296 Q44 -326 20 -328 Q-4 -318 -30 -330 Q-48 -322 -55 -296 Z'), '#7a4a2a') +
+      `<ellipse cx="-32" cy="-266" rx="10" ry="6" fill="#ef8f8f" opacity=".65"/><ellipse cx="32" cy="-266" rx="10" ry="6" fill="#ef8f8f" opacity=".65"/>` +
+      (o.redNose ? `<ellipse cx="0" cy="-272" rx="9" ry="7" fill="#e0425a" stroke="${OUT}" stroke-width="2.5"/>` : ln('M-3 -276 q3 5 7 1', 2.5, HERO_SKIN_SHADE)) +
       (o.dots ? `<circle cx="-34" cy="-250" r="3.2" fill="#5a0f1c"/><circle cx="-25" cy="-244" r="3.2" fill="#5a0f1c"/>` : '') +
       face(0, -288, o.expr, { look: o.look, fangs: 9 }),
   });
@@ -218,7 +240,7 @@ export function hero(x, y, s = 1, o = {}) {
 // Mme Morticia (Yvonne) : longue robe sombre, collier de perles, chignon blanc.
 export function morticia(x, y, s = 1, o = {}) {
   return figure(x, y, s, o, {
-    sx: 40, sy: -186, sleeve: '#4f3a6e', skin: '#f0c7a3', shadow: 90, sitDrop: 0,
+    sx: 40, sy: -186, sleeve: '#4f3a6e', skin: '#f0c7a3', shadow: 90,
     legs: () => '',
     body: (o) => {
       let b = cel(P('M-44 -204 Q-54 -100 -84 -4 L84 -4 Q54 -100 44 -204 Q0 -220 -44 -204 Z'), '#4f3a6e', '#382850') + ln('M-70 -22 Q0 -8 70 -22', 3, '#6d5690');
@@ -249,8 +271,9 @@ function henriHead(o = {}) {
 // Henri : vieil homme élégant d'un autre temps (veste brune, nœud papillon, moustache blanche).
 export function henri(x, y, s = 1, o = {}) {
   return figure(x, y, s, o, {
-    sx: 40, sy: -232, sleeve: '#74553f', skin: '#ddd6c6', shadow: 80, sitDrop: 62,
-    legs: (d) => flat(R(-27, -132 + d, 23, 124 - d, 5), '#3d3a50') + flat(R(4, -132 + d, 23, 124 - d, 5), '#3d3a50') +
+    sx: 40, sy: -232, sleeve: '#74553f', skin: '#ddd6c6', shadow: 80,
+    hip: 120, seat: 96, legC: '#3d3a50', legShade: '#2a2838', shoeC: '#2a1c18',
+    legs: () => flat(R(-27, -132, 23, 124, 5), '#3d3a50') + flat(R(4, -132, 23, 124, 5), '#3d3a50') +
       flat(E(-20, -4, 20, 9), '#2a1c18') + flat(E(20, -4, 20, 9), '#2a1c18'),
     body: () =>
       cel(P('M-42 -252 Q-50 -170 -44 -118 L44 -118 Q50 -170 42 -252 Q0 -264 -42 -252Z'), '#74553f', '#573d2c') +
@@ -263,7 +286,7 @@ export function henri(x, y, s = 1, o = {}) {
 // Secouriste du SAMU.
 export function medic(x, y, s = 1, o = {}) {
   return figure(x, y, s, o, {
-    sx: 44, sy: -216, sleeve: '#eef2f5', skin: '#e8b48c', shadow: 85, sitDrop: 0,
+    sx: 44, sy: -216, sleeve: '#eef2f5', skin: '#e8b48c', shadow: 85,
     legs: () => flat(R(-30, -112, 25, 104, 6), '#2f4f9a') + flat(R(5, -112, 25, 104, 6), '#2f4f9a') + flat(E(-22, -4, 21, 9), '#14101f') + flat(E(22, -4, 21, 9), '#14101f'),
     body: () => cel(R(-42, -236, 84, 134, 18), '#eef2f5', '#c5d0d9') + plain(R(-42, -150, 84, 12), '#2f4f9a') + plain(R(-42, -128, 84, 8), '#c9d24a') +
       plain(P('M18 -214 h8 v8 h8 v8 h-8 v8 h-8 v-8 h-8 v-8 h8z'), '#2f4f9a'),
@@ -308,6 +331,14 @@ export function chairFront(x, y, s = 1) {
     cel(P('M-92 -60 L-92 -230 Q-92 -292 0 -292 Q92 -292 92 -230 L92 -60 Z'), '#8a3442', '#64222f', 12, 6) +
     cel(R(-96, -92, 192, 76, 14), '#9a3d4c', '#64222f', 6, 5) +
     cel(R(-126, -140, 42, 124, 16), '#9a3d4c', '#64222f', 5, 4) + cel(R(84, -140, 42, 124, 16), '#9a3d4c', '#64222f', 5, 4);
+  return G(x, y, s, i);
+}
+
+export function woodChair(x, y, s = 1) {
+  const i = `<ellipse cx="0" cy="2" rx="80" ry="11" fill="#000" opacity=".25"/>` +
+    flat(R(-58, -250, 16, 250, 5), '#6a4433') + flat(R(42, -250, 16, 250, 5), '#6a4433') +
+    cel(R(-62, -262, 124, 34, 10), '#8a5f40', '#5f3f28', 5, 4) + flat(R(-46, -200, 92, 14, 5), '#7a5236') + flat(R(-46, -160, 92, 14, 5), '#7a5236') +
+    cel(R(-66, -100, 132, 20, 8), '#8a5f40', '#5f3f28', 5, 4);
   return G(x, y, s, i);
 }
 

@@ -46,12 +46,12 @@ const slides = [
   // 5 — sur le perron
   () => A.porch() + morticia(600, 668, 1.3, { expr: 'happy', R: 'up' }) + A.pumpkin(960, 712, 0.9) + hero(250, 790, 1.4, { expr: 'smile', look: 1, L: 'front', R: 'front', item: 'cat' }),
   // 6 — le salon d'un autre temps
-  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 716, 1.2, { expr: 'neutral', look: 1, sit: true }) + morticia(660, Y, 1.25, { expr: 'happy', L: 'reach', look: -1 }),
+  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 722, 1.2, { expr: 'neutral', look: 1, sit: true }) + morticia(660, Y, 1.25, { expr: 'happy', L: 'reach', look: -1 }),
   // 7 — l'histoire de Minou
-  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 716, 1.2, { expr: 'smile', look: 1, sit: true, R: 'hold', item: 'cup' }) + morticia(680, Y, 1.25, { expr: 'happy', L: 'front', R: 'front', item: 'cat' }),
+  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 722, 1.2, { expr: 'smile', look: 1, sit: true, R: 'hold', item: 'cup' }) + morticia(680, Y, 1.25, { expr: 'happy', L: 'front', R: 'front', item: 'cat' }),
   // 8 — Boum ! à l'étage
   () => A.salon() + A.burst(600, 30, 120) + line('M470 110 v40 M600 150 v50 M730 110 v40', 6, '#f4efe6') + A.sofa(340, 720, 1.15) +
-    hero(300, 716, 1.2, { expr: 'scared', sit: true, L: 'up', R: 'up' }) + cat(520, 742, 0.9, { alert: true }) + morticia(720, Y, 1.25, { expr: 'smile', R: 'up', L: 'hold', hand: 'L', item: 'cup', itemO: { steam: false } }),
+    hero(300, 722, 1.2, { expr: 'scared', sit: true, L: 'up', R: 'up' }) + cat(520, 742, 0.9, { alert: true }) + morticia(720, Y, 1.25, { expr: 'smile', R: 'up', L: 'hold', hand: 'L', item: 'cup', itemO: { steam: false } }),
   // 9 — l'escalier
   () => A.stairs() + hero(600, 436, 1.1, { expr: 'worried', look: 1, R: 'hold', item: 'glass', noShadow: true }),
   // 10 — troisième porte à gauche
@@ -99,13 +99,13 @@ const slides = [
   // 27 — FIN
   () => fin('card'),
   // 28 — trois tasses
-  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 716, 1.2, { expr: 'smile', look: 1, sit: true }) + morticia(760, Y, 1.25, { expr: 'happy', look: -1 }) +
+  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 722, 1.2, { expr: 'smile', look: 1, sit: true }) + morticia(760, Y, 1.25, { expr: 'happy', look: -1 }) +
     A.table(560, 770, 1.3, { w: 120, h: 50 }) + prop('cup', 470, 668, 1.5) + prop('cup', 560, 668, 1.5) + prop('cup', 650, 668, 1.5),
   // 29 — les paupières lourdes
-  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 716, 1.2, { expr: 'dizzy', sit: true }) + morticia(520, Y, 1.25, { expr: 'smile', look: -1, L: 'reach' }) +
+  () => A.salon() + A.sofa(340, 720, 1.15) + hero(300, 722, 1.2, { expr: 'dizzy', sit: true }) + morticia(520, Y, 1.25, { expr: 'smile', look: -1, L: 'reach' }) +
     A.table(820, 770, 1.3, { w: 120, h: 50 }) + prop('cup', 760, 668, 1.5, { steam: false }) + prop('cup', 870, 668, 1.5),
   // 30 — Henri descend
-  () => A.salon({ dark: true }) + A.sofa(340, 720, 1.15) + hero(300, 716, 1.2, { expr: 'dizzy', sit: true }) + henri(560, Y, 1.25, { expr: 'grin', look: -1 }) + morticia(800, Y, 1.25, { expr: 'sad', look: -1 }) +
+  () => A.salon({ dark: true }) + A.sofa(340, 720, 1.15) + hero(300, 722, 1.2, { expr: 'dizzy', sit: true }) + henri(560, Y, 1.25, { expr: 'grin', look: -1 }) + morticia(800, Y, 1.25, { expr: 'sad', look: -1 }) +
     prop('candle', 80, 700, 2) + prop('candle', 1120, 720, 2.4),
   // 31 — le souffle glacé
   () => A.salon({ dark: true, fire: false }) + dim(0.3) + hero(760, 1100, 2.3, { expr: 'scared', look: -1 }) + henri(360, 1130, 2.3, { expr: 'grin', look: 1, R: 'reach' }) + prop('candle', 1100, 700, 3),
@@ -120,7 +120,7 @@ const slides = [
   () => room() + chair() + henri(630, Y, 1.3, { expr: 'grin', look: 1, R: 'reach' }) + hero(830, 750, 1.25, { expr: 'smile', look: -1, L: 'reach' }),
   // 35 — deux petits points noirs
   () => room({ door: 'open' }) + chair() + henri(630, Y, 1.25, { expr: 'smile', look: 1 }) + hero(880, 750, 1.3, { expr: 'worried', look: 1, R: 'up', handDots: 'R' }) +
-    A.bubble(1040, 150, 90, 80, `<circle r="60" fill="#e6e1f2"/><circle cx="-14" cy="0" r="9" fill="#5a0f1c"/><circle cx="14" cy="0" r="9" fill="#5a0f1c"/>`, { tail: [1010, 290] }),
+    A.bubble(1040, 150, 90, 80, `<circle r="60" fill="#f3c9a2"/><circle cx="-14" cy="0" r="9" fill="#5a0f1c"/><circle cx="14" cy="0" r="9" fill="#5a0f1c"/>`, { tail: [1010, 290] }),
   // 36 — le réfrigérateur
   () => A.kitchen() + prop('garlic', 420, 446, 1.5) + prop('garlic', 480, 450, 1.2) + hero(760, 760, 1.25, { expr: 'smile', look: 1, R: 'hold', item: 'garlic', itemS: 1.2 }),
   // 37 — la touche finale
@@ -174,11 +174,11 @@ const slides = [
   // 58 — choix : l'amour ou l'échiquier
   () => room({ winX: 120 }) + A.chairBack(260, Y, 1.35, { head: 'turn', expr: 'neutral', look: 1 }) + A.chessTable(620, 740, 1.5) + hero(880, 750, 1.25, { expr: 'worried', R: 'chin' }),
   // 59 — votre grand amour
-  () => room({ door: null }) + chair({ head: 'turn', expr: 'happy' }) + A.bed(960, 740, 1.2) + hero(880, 716, 1.2, { expr: 'happy', look: -1, sit: true, L: 'reach' }) + A.bubble(1000, 160, 110, 90, prop('heart', 0, -4, 3.4), { tail: [930, 300] }),
+  () => room({ door: null }) + chair({ head: 'turn', expr: 'happy' }) + A.bed(960, 740, 1.2) + hero(860, 746, 1.2, { expr: 'happy', look: -1, sit: true, L: 'reach' }) + A.bubble(1000, 160, 110, 90, prop('heart', 0, -4, 3.4), { tail: [930, 300] }),
   // 60 — l'alliance
   () => A.closeBG('#463b7c', '#5a4d99') + `<circle cx="600" cy="400" r="170" fill="#fff3a8" opacity=".25"/>` +
     `<path d="M-40 620 L470 470" stroke="${A.OUT}" stroke-width="150" stroke-linecap="round"/><path d="M-40 620 L470 470" stroke="#74553f" stroke-width="136" stroke-linecap="round"/><circle cx="500" cy="462" r="74" fill="#ddd6c6" stroke="${A.OUT}" stroke-width="7"/>` +
-    `<path d="M1240 620 L730 520" stroke="${A.OUT}" stroke-width="150" stroke-linecap="round"/><path d="M1240 620 L730 520" stroke="#2f2a4d" stroke-width="136" stroke-linecap="round"/><circle cx="700" cy="514" r="74" fill="#e6e1f2" stroke="${A.OUT}" stroke-width="7"/>` +
+    `<path d="M1240 620 L730 520" stroke="${A.OUT}" stroke-width="150" stroke-linecap="round"/><path d="M1240 620 L730 520" stroke="#2f2a4d" stroke-width="136" stroke-linecap="round"/><circle cx="700" cy="514" r="74" fill="#f3c9a2" stroke="${A.OUT}" stroke-width="7"/>` +
     prop('ring', 600, 370, 5),
   // 61 — retour à la fête
   () => A.street() + A.house(250, 580, 0.8, { upLit: true }) + A.lamppost(520, 600, 1) + A.house(930, 600, 1, { party: true }) + hero(600, 770, 1.2, { expr: 'smile', look: 1, R: 'hold', item: 'ring', itemS: 0.8 }),
@@ -192,7 +192,7 @@ const slides = [
   // 65 — « Vous jouez aux échecs ? »
   () => room({ winX: 120 }) + A.chairBack(260, Y, 1.35) + henri(400, Y, 1.3, { expr: 'happy', L: 'up', R: 'up' }) + A.chessTable(640, 740, 1.5) + hero(900, 750, 1.25, { expr: 'smile', look: -1, L: 'reach' }),
   // 66 — la partie commence
-  () => room({ winX: 460, door: null }) + A.chairFront(300, 734, 1.3) + henri(300, 724, 1.3, { expr: 'smile', look: 1, sit: true, R: 'hold' }) + hero(880, 724, 1.3, { expr: 'smile', look: -1, sit: true, L: 'hold' }) + A.chessTable(605, 760, 1.6),
+  () => room({ winX: 460, door: null }) + A.chairFront(290, 740, 1.3) + henri(290, 744, 1.25, { expr: 'smile', look: 1, sit: true, R: 'hold' }) + A.woodChair(900, 740, 1.3) + hero(900, 744, 1.3, { expr: 'smile', look: -1, sit: true, L: 'hold' }) + A.chessTable(605, 760, 1.6),
   // 67 — le cavalier
   () => A.closeBG('#463b7c', '#5a4d99') + henri(260, 1150, 2.3, { expr: 'smile', look: 1 }) + hero(960, 1160, 2.2, { expr: 'surprised', look: -1 }) +
     `<circle cx="610" cy="330" r="150" fill="#fff3a8" opacity=".25"/>` + prop('knight', 610, 330, 7, { dark: true }),
@@ -234,7 +234,7 @@ const slides = [
   // 81 — la lettre du notaire
   () => room({ lit: true, photos: true, window: false, door: null }) + prop('paper', 420, 400, 9.5, { typed: true, rot: -4 }) + hero(930, 1010, 2, { expr: 'surprised', look: -1 }),
   // 82 — une longue histoire
-  () => room({ lit: true, photos: true, winX: 60 }) + A.chairFront(480, Y, 1.35) + henri(480, 716, 1.3, { expr: 'sad', sit: true, R: 'reach' }) + hero(860, 750, 1.25, { expr: 'worried', look: -1 }),
+  () => room({ lit: true, photos: true, winX: 60 }) + A.chairFront(480, Y, 1.35) + henri(480, 734, 1.3, { expr: 'sad', sit: true, R: 'reach' }) + hero(860, 750, 1.25, { expr: 'worried', look: -1 }),
   // 83 — la pendule arrêtée à 23 h 44
   () => room({ lit: true, door: null, winX: 120 }) + G(0, 20, 1, A.fireplace(900, 600, { clock: [11, 44] })) + henri(330, Y, 1.3, { expr: 'sad', look: -1, ghost: 0.75 }) + hero(660, 750, 1.2, { expr: 'worried', look: 1 }),
   // 84 — la porte s'entrouvre
