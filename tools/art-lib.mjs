@@ -195,11 +195,13 @@ function figure(x, y, s, o, cfg) {
 export function hero(x, y, s = 1, o = {}) {
   return figure(x, y, s, o, {
     sx: 44, sy: -214, sleeve: '#2f2a4d', skin: '#e6e1f2', shadow: 100, sitDrop: 60,
-    legs: (d) => flat(R(-30, -112 + d, 25, 104 - d, 6), '#23203a') + flat(R(5, -112 + d, 25, 104 - d, 6), '#23203a') +
-      flat(E(-22, -4, 21, 9), '#14101f') + flat(E(22, -4, 21, 9), '#14101f'),
-    body: () =>
+    // La cape passe derrière les jambes pour qu'elles restent visibles.
+    legs: (d) => `<g transform="translate(0 ${d * 0.5}) scale(1 ${1 - d / 480})">` +
       cel(P('M-58 -238 Q-124 -120 -108 -8 Q-72 -24 -54 -6 Q-27 -24 0 -6 Q27 -24 54 -6 Q72 -24 108 -8 Q124 -120 58 -238 Z'), '#33274f', '#221a38') +
-      plain(P('M-44 -228 Q-78 -120 -66 -26 L66 -26 Q78 -120 44 -228 Z'), '#a3202f') +
+      plain(P('M-44 -228 Q-78 -120 -66 -26 L66 -26 Q78 -120 44 -228 Z'), '#a3202f') + '</g>' +
+      flat(R(-31, -112 + d, 27, 104 - d, 6), '#3d3766') + flat(R(4, -112 + d, 27, 104 - d, 6), '#3d3766') +
+      flat(E(-22, -4, 22, 10), '#14101f') + flat(E(22, -4, 22, 10), '#14101f'),
+    body: () =>
       flat(P('M-40 -238 L-82 -322 L-14 -262 Z'), '#c8343f') + flat(P('M40 -238 L82 -322 L14 -262 Z'), '#c8343f') +
       cel(R(-40, -234, 80, 132, 18), '#2f2a4d', '#211d38') +
       thin(P('M-16 -234 L0 -188 L16 -234 Z'), '#f3efe6') +
